@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nightfall-gargoyle"
+version = "0.1.0"
+description = "Juego de plataformas original, multiplataforma, con guardado y resolución configurable."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pygame>=2.5.2",
+]
+
+[project.scripts]
+nightfall-gargoyle = "nightfall_gargoyle.main:main"
+
+[tool.setuptools]
+packages = ["nightfall_gargoyle"]
