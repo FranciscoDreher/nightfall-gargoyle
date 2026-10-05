@@ -48,6 +48,10 @@ nightfall-gargoyle
 - `F9`: cargar partida.
 - `F11`: pantalla completa.
 
+## Documentación
+
+- Arquitectura del proyecto: [ARCHITECTURE.md](ARCHITECTURE.md)
+
 ## Guardados y configuración
 
 El juego usa carpetas de usuario nativas:
