@@ -6,7 +6,7 @@ import math
 import unittest
 from unittest.mock import MagicMock
 
-from nightfall_gargoyle.levels import LEVELS, LevelData, RectDef
+from nightfall_gargoyle.levels import LEVELS, LevelData, RectDef, validate_level
 
 # Mock pygame si no está disponible (para CI/testing)
 try:
@@ -42,6 +42,30 @@ class MockRect:
 # Use pygame.Rect if available, otherwise use MockRect
 if not pygame_available or not hasattr(pygame, 'Rect'):
     Rect = MockRect
+
+
+class TestLevelValidation(unittest.TestCase):
+    """Valida invariantes estructurales y de diseño para cada nivel."""
+
+    def test_validate_level_rejects_missing_shards(self) -> None:
+        invalid = LevelData(
+            level_id="broken_level",
+            name="Nivel inválido",
+            subtitle="Debe fallar",
+            width=2000,
+            height=600,
+            spawn=(100.0, 500.0),
+            shards_required=3,
+            platforms=((0, 520, 2000, 80),),
+            hazards=(),
+            shards=(("broken_level:shard_01", 200, 460),),
+            enemies=(),
+            checkpoints=(),
+            exit_gate=(1800, 420, 60, 100),
+        )
+
+        with self.assertRaises(ValueError):
+            validate_level(invalid)
 
 
 class TestLevelProgression(unittest.TestCase):
@@ -253,6 +277,15 @@ class TestLevelBalance(unittest.TestCase):
                 required,
                 available_shards,
                 f"{level.level_id}: Se piden {required} shards pero hay {available_shards}"
+            )
+
+    def test_required_shards_match_total_in_level(self) -> None:
+        """El contador del nivel debe reflejar el total real del mapa."""
+        for level in LEVELS:
+            self.assertEqual(
+                level.shards_required,
+                len(level.shards),
+                f"{level.level_id}: requiere {level.shards_required} pero hay {len(level.shards)} shards en el mapa"
             )
 
     def test_no_impossible_gaps(self) -> None:
